@@ -3,38 +3,671 @@ media:
   output: /assets/uploads
 
 content:
+  - name: texts_ar
+    label: النصوص العربية
+    type: file
+    path: content/texts/ar.json
+    format: json
+    fields:
+      - name: home
+        label: home
+        type: string
+      - name: courses
+        label: courses
+        type: string
+      - name: books
+        label: books
+        type: string
+      - name: private
+        label: private
+        type: string
+      - name: institutions
+        label: institutions
+        type: string
+      - name: contact
+        label: contact
+        type: string
+      - name: about
+        label: about
+        type: string
+      - name: eyebrow
+        label: eyebrow
+        type: string
+      - name: hero_title
+        label: hero_title
+        type: string
+      - name: hero_description
+        label: hero_description
+        type: text
+      - name: explore_courses
+        label: explore_courses
+        type: string
+      - name: explore_books
+        label: explore_books
+        type: string
+      - name: services_title
+        label: services_title
+        type: string
+      - name: services_description
+        label: services_description
+        type: text
+      - name: service_course_title
+        label: service_course_title
+        type: string
+      - name: service_course_text
+        label: service_course_text
+        type: text
+      - name: service_book_title
+        label: service_book_title
+        type: string
+      - name: service_book_text
+        label: service_book_text
+        type: text
+      - name: service_private_title
+        label: service_private_title
+        type: string
+      - name: service_private_text
+        label: service_private_text
+        type: text
+      - name: service_institution_title
+        label: service_institution_title
+        type: string
+      - name: service_institution_text
+        label: service_institution_text
+        type: text
+      - name: about_title
+        label: about_title
+        type: string
+      - name: about_text
+        label: about_text
+        type: text
+      - name: feature_one
+        label: feature_one
+        type: string
+      - name: feature_two
+        label: feature_two
+        type: string
+      - name: feature_three
+        label: feature_three
+        type: string
+      - name: courses_title
+        label: courses_title
+        type: string
+      - name: courses_description
+        label: courses_description
+        type: text
+      - name: books_title
+        label: books_title
+        type: string
+      - name: books_description
+        label: books_description
+        type: text
+      - name: private_title
+        label: private_title
+        type: string
+      - name: private_description
+        label: private_description
+        type: text
+      - name: institutions_title
+        label: institutions_title
+        type: string
+      - name: institutions_description
+        label: institutions_description
+        type: text
+      - name: contact_title
+        label: contact_title
+        type: string
+      - name: contact_description
+        label: contact_description
+        type: text
+      - name: name
+        label: name
+        type: string
+      - name: email
+        label: email
+        type: string
+      - name: subject
+        label: subject
+        type: string
+      - name: level
+        label: level
+        type: string
+      - name: details
+        label: details
+        type: string
+      - name: organization
+        label: organization
+        type: string
+      - name: person
+        label: person
+        type: string
+      - name: phone
+        label: phone
+        type: string
+      - name: requirements
+        label: requirements
+        type: string
+      - name: send
+        label: send
+        type: string
+      - name: buy_course
+        label: buy_course
+        type: string
+      - name: buy_book
+        label: buy_book
+        type: string
+      - name: price
+        label: price
+        type: string
+      - name: footer
+        label: footer
+        type: text
+      - name: copyright
+        label: copyright
+        type: string
+      - name: privacy
+        label: privacy
+        type: string
+      - name: privacy_text
+        label: privacy_text
+        type: text
+      - name: back
+        label: back
+        type: string
+      - name: more
+        label: more
+        type: string
+  - name: texts_en
+    label: English texts
+    type: file
+    path: content/texts/en.json
+    format: json
+    fields:
+      - name: home
+        label: home
+        type: string
+      - name: courses
+        label: courses
+        type: string
+      - name: books
+        label: books
+        type: string
+      - name: private
+        label: private
+        type: string
+      - name: institutions
+        label: institutions
+        type: string
+      - name: contact
+        label: contact
+        type: string
+      - name: about
+        label: about
+        type: string
+      - name: eyebrow
+        label: eyebrow
+        type: string
+      - name: hero_title
+        label: hero_title
+        type: string
+      - name: hero_description
+        label: hero_description
+        type: text
+      - name: explore_courses
+        label: explore_courses
+        type: string
+      - name: explore_books
+        label: explore_books
+        type: string
+      - name: services_title
+        label: services_title
+        type: string
+      - name: services_description
+        label: services_description
+        type: text
+      - name: service_course_title
+        label: service_course_title
+        type: string
+      - name: service_course_text
+        label: service_course_text
+        type: text
+      - name: service_book_title
+        label: service_book_title
+        type: string
+      - name: service_book_text
+        label: service_book_text
+        type: text
+      - name: service_private_title
+        label: service_private_title
+        type: string
+      - name: service_private_text
+        label: service_private_text
+        type: text
+      - name: service_institution_title
+        label: service_institution_title
+        type: string
+      - name: service_institution_text
+        label: service_institution_text
+        type: text
+      - name: about_title
+        label: about_title
+        type: string
+      - name: about_text
+        label: about_text
+        type: text
+      - name: feature_one
+        label: feature_one
+        type: string
+      - name: feature_two
+        label: feature_two
+        type: string
+      - name: feature_three
+        label: feature_three
+        type: string
+      - name: courses_title
+        label: courses_title
+        type: string
+      - name: courses_description
+        label: courses_description
+        type: text
+      - name: books_title
+        label: books_title
+        type: string
+      - name: books_description
+        label: books_description
+        type: text
+      - name: private_title
+        label: private_title
+        type: string
+      - name: private_description
+        label: private_description
+        type: text
+      - name: institutions_title
+        label: institutions_title
+        type: string
+      - name: institutions_description
+        label: institutions_description
+        type: text
+      - name: contact_title
+        label: contact_title
+        type: string
+      - name: contact_description
+        label: contact_description
+        type: text
+      - name: name
+        label: name
+        type: string
+      - name: email
+        label: email
+        type: string
+      - name: subject
+        label: subject
+        type: string
+      - name: level
+        label: level
+        type: string
+      - name: details
+        label: details
+        type: string
+      - name: organization
+        label: organization
+        type: string
+      - name: person
+        label: person
+        type: string
+      - name: phone
+        label: phone
+        type: string
+      - name: requirements
+        label: requirements
+        type: string
+      - name: send
+        label: send
+        type: string
+      - name: buy_course
+        label: buy_course
+        type: string
+      - name: buy_book
+        label: buy_book
+        type: string
+      - name: price
+        label: price
+        type: string
+      - name: footer
+        label: footer
+        type: text
+      - name: copyright
+        label: copyright
+        type: string
+      - name: privacy
+        label: privacy
+        type: string
+      - name: privacy_text
+        label: privacy_text
+        type: text
+      - name: back
+        label: back
+        type: string
+      - name: more
+        label: more
+        type: string
+  - name: texts_fr
+    label: Textes français
+    type: file
+    path: content/texts/fr.json
+    format: json
+    fields:
+      - name: home
+        label: home
+        type: string
+      - name: courses
+        label: courses
+        type: string
+      - name: books
+        label: books
+        type: string
+      - name: private
+        label: private
+        type: string
+      - name: institutions
+        label: institutions
+        type: string
+      - name: contact
+        label: contact
+        type: string
+      - name: about
+        label: about
+        type: string
+      - name: eyebrow
+        label: eyebrow
+        type: string
+      - name: hero_title
+        label: hero_title
+        type: string
+      - name: hero_description
+        label: hero_description
+        type: text
+      - name: explore_courses
+        label: explore_courses
+        type: string
+      - name: explore_books
+        label: explore_books
+        type: string
+      - name: services_title
+        label: services_title
+        type: string
+      - name: services_description
+        label: services_description
+        type: text
+      - name: service_course_title
+        label: service_course_title
+        type: string
+      - name: service_course_text
+        label: service_course_text
+        type: text
+      - name: service_book_title
+        label: service_book_title
+        type: string
+      - name: service_book_text
+        label: service_book_text
+        type: text
+      - name: service_private_title
+        label: service_private_title
+        type: string
+      - name: service_private_text
+        label: service_private_text
+        type: text
+      - name: service_institution_title
+        label: service_institution_title
+        type: string
+      - name: service_institution_text
+        label: service_institution_text
+        type: text
+      - name: about_title
+        label: about_title
+        type: string
+      - name: about_text
+        label: about_text
+        type: text
+      - name: feature_one
+        label: feature_one
+        type: string
+      - name: feature_two
+        label: feature_two
+        type: string
+      - name: feature_three
+        label: feature_three
+        type: string
+      - name: courses_title
+        label: courses_title
+        type: string
+      - name: courses_description
+        label: courses_description
+        type: text
+      - name: books_title
+        label: books_title
+        type: string
+      - name: books_description
+        label: books_description
+        type: text
+      - name: private_title
+        label: private_title
+        type: string
+      - name: private_description
+        label: private_description
+        type: text
+      - name: institutions_title
+        label: institutions_title
+        type: string
+      - name: institutions_description
+        label: institutions_description
+        type: text
+      - name: contact_title
+        label: contact_title
+        type: string
+      - name: contact_description
+        label: contact_description
+        type: text
+      - name: name
+        label: name
+        type: string
+      - name: email
+        label: email
+        type: string
+      - name: subject
+        label: subject
+        type: string
+      - name: level
+        label: level
+        type: string
+      - name: details
+        label: details
+        type: string
+      - name: organization
+        label: organization
+        type: string
+      - name: person
+        label: person
+        type: string
+      - name: phone
+        label: phone
+        type: string
+      - name: requirements
+        label: requirements
+        type: string
+      - name: send
+        label: send
+        type: string
+      - name: buy_course
+        label: buy_course
+        type: string
+      - name: buy_book
+        label: buy_book
+        type: string
+      - name: price
+        label: price
+        type: string
+      - name: footer
+        label: footer
+        type: text
+      - name: copyright
+        label: copyright
+        type: string
+      - name: privacy
+        label: privacy
+        type: string
+      - name: privacy_text
+        label: privacy_text
+        type: text
+      - name: back
+        label: back
+        type: string
+      - name: more
+        label: more
+        type: string
+  - name: settings
+    label: الإعدادات والتصميم
+    type: file
+    path: content/site.json
+    format: json
+    fields:
+      - name: brand
+        label: brand
+        type: string
+      - name: tagline
+        label: tagline
+        type: string
+      - name: logo
+        label: logo
+        type: image
+      - name: email
+        label: email
+        type: string
+      - name: website
+        label: website
+        type: string
+      - name: udemy_url
+        label: udemy_url
+        type: string
+      - name: payhip_url
+        label: payhip_url
+        type: string
+      - name: hero_image
+        label: hero_image
+        type: image
+      - name: about_image
+        label: about_image
+        type: image
+      - name: color_navy
+        label: color_navy
+        type: string
+      - name: color_blue
+        label: color_blue
+        type: string
+      - name: color_orange
+        label: color_orange
+        type: string
+      - name: color_background
+        label: color_background
+        type: string
+      - name: corner_radius
+        label: corner_radius
+        type: number
+      - name: default_language
+        label: default_language
+        type: string
+      - name: show_prices
+        label: show_prices
+        type: boolean
+      - name: show_services
+        label: show_services
+        type: boolean
+      - name: show_about
+        label: show_about
+        type: boolean
+      - name: show_courses
+        label: show_courses
+        type: boolean
+      - name: show_books
+        label: show_books
+        type: boolean
+      - name: show_private
+        label: show_private
+        type: boolean
+      - name: show_institutions
+        label: show_institutions
+        type: boolean
+      - name: show_contact
+        label: show_contact
+        type: boolean
+      - name: section_order
+        label: ترتيب الأقسام (اسحب لتغيير الترتيب)
+        type: select
+        list: true
+        options:
+          values:
+            - services
+            - about
+            - courses
+            - books
+            - private
+            - institutions
+            - contact
+      - name: social_instagram
+        label: social_instagram
+        type: string
+      - name: social_facebook
+        label: social_facebook
+        type: string
+      - name: social_youtube
+        label: social_youtube
+        type: string
+      - name: social_tiktok
+        label: social_tiktok
+        type: string
   - name: courses
-    label: الكورسات المسجلة
+    label: الكورسات
     type: collection
     path: content/courses
     format: json
     filename: "{primary}.json"
     fields:
-      - name: title
-        label: اسم الكورس
+      - name: title_ar
+        label: title_ar
         type: string
-        required: true
-      - name: description
-        label: وصف الكورس
+      - name: title_en
+        label: title_en
+        type: string
+      - name: title_fr
+        label: title_fr
+        type: string
+      - name: description_ar
+        label: description_ar
+        type: text
+      - name: description_en
+        label: description_en
+        type: text
+      - name: description_fr
+        label: description_fr
         type: text
       - name: image
-        label: صورة الكورس
+        label: image
         type: image
       - name: price
-        label: السعر
+        label: price
         type: string
       - name: url
-        label: رابط الكورس
+        label: url
         type: string
       - name: language
-        label: اللغة
-        type: select
-        options:
-          values:
-            - ar
-            - en
-            - fr
-
+        label: language
+        type: string
+      - name: published
+        label: published
+        type: boolean
+      - name: order
+        label: order
+        type: number
   - name: books
     label: الكتب
     type: collection
@@ -42,62 +675,39 @@ content:
     format: json
     filename: "{primary}.json"
     fields:
-      - name: title
-        label: اسم الكتاب
+      - name: title_ar
+        label: title_ar
         type: string
-        required: true
-      - name: description
-        label: وصف الكتاب
-        type: text
-      - name: image
-        label: غلاف الكتاب
-        type: image
-      - name: price
-        label: السعر
+      - name: title_en
+        label: title_en
         type: string
-      - name: url
-        label: رابط Payhip
-        type: string
-      - name: language
-        label: اللغة
-        type: select
-        options:
-          values:
-            - ar
-            - en
-            - fr
-
-  - name: site
-    label: إعدادات الموقع والنصوص
-    type: file
-    path: content/site.json
-    format: json
-    fields:
-      - name: logo
-        label: الشعار
-        type: image
-      - name: email
-        label: البريد الإلكتروني
-        type: string
-      - name: hero_title_ar
-        label: العنوان العربي
-        type: string
-      - name: hero_title_en
-        label: العنوان الإنجليزي
-        type: string
-      - name: hero_title_fr
-        label: العنوان الفرنسي
+      - name: title_fr
+        label: title_fr
         type: string
       - name: description_ar
-        label: الوصف العربي
+        label: description_ar
         type: text
       - name: description_en
-        label: الوصف الإنجليزي
+        label: description_en
         type: text
       - name: description_fr
-        label: الوصف الفرنسي
+        label: description_fr
         type: text
-
-settings:
-  commit:
-    identity: app
+      - name: image
+        label: image
+        type: image
+      - name: price
+        label: price
+        type: string
+      - name: url
+        label: url
+        type: string
+      - name: language
+        label: language
+        type: string
+      - name: published
+        label: published
+        type: boolean
+      - name: order
+        label: order
+        type: number
