@@ -1,0 +1,103 @@
+media:
+  input: assets/uploads
+  output: /assets/uploads
+
+content:
+  - name: courses
+    label: الكورسات المسجلة
+    type: collection
+    path: content/courses
+    format: json
+    filename: "{primary}.json"
+    fields:
+      - name: title
+        label: اسم الكورس
+        type: string
+        required: true
+      - name: description
+        label: وصف الكورس
+        type: text
+      - name: image
+        label: صورة الكورس
+        type: image
+      - name: price
+        label: السعر
+        type: string
+      - name: url
+        label: رابط الكورس
+        type: string
+      - name: language
+        label: اللغة
+        type: select
+        options:
+          values:
+            - ar
+            - en
+            - fr
+
+  - name: books
+    label: الكتب
+    type: collection
+    path: content/books
+    format: json
+    filename: "{primary}.json"
+    fields:
+      - name: title
+        label: اسم الكتاب
+        type: string
+        required: true
+      - name: description
+        label: وصف الكتاب
+        type: text
+      - name: image
+        label: غلاف الكتاب
+        type: image
+      - name: price
+        label: السعر
+        type: string
+      - name: url
+        label: رابط Payhip
+        type: string
+      - name: language
+        label: اللغة
+        type: select
+        options:
+          values:
+            - ar
+            - en
+            - fr
+
+  - name: site
+    label: إعدادات الموقع والنصوص
+    type: file
+    path: content/site.json
+    format: json
+    fields:
+      - name: logo
+        label: الشعار
+        type: image
+      - name: email
+        label: البريد الإلكتروني
+        type: string
+      - name: hero_title_ar
+        label: العنوان العربي
+        type: string
+      - name: hero_title_en
+        label: العنوان الإنجليزي
+        type: string
+      - name: hero_title_fr
+        label: العنوان الفرنسي
+        type: string
+      - name: description_ar
+        label: الوصف العربي
+        type: text
+      - name: description_en
+        label: الوصف الإنجليزي
+        type: text
+      - name: description_fr
+        label: الوصف الفرنسي
+        type: text
+
+settings:
+  commit:
+    identity: app
