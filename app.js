@@ -25,7 +25,55 @@ function about(s){
   wrap.append(content);
   s.append(wrap);
 }
-function products(s,kind){const grid=E('div','products');(app[kind]||[]).forEach(item=>{const card=E('article','product'),art=E('div','product-image'),photo=img(item.image);if(photo){const i=E('img');i.src=photo;i.alt=item['title_'+language]||item.title||'';i.loading='lazy';art.append(i)}else art.textContent=kind==='books'?'📖':'📚';const body=E('div','product-body');if(item.language)body.append(E('span','pill',item.language.toUpperCase()));body.append(E('h3','',item['title_'+language]||item.title_ar||item.title_en||item.title||''));const d=item['description_'+language]||item.description_ar||item.description||'';if(d)body.append(E('p','',d));if(item.price&&app.settings.show_prices!==false)body.append(E('p','price',txt('price')+': '+item.price));const target=url(item.url);if(target){const a=link(txt(kind==='books'?'buy_book':'buy_course'),target,'button blue');a.target='_blank';a.rel='noopener noreferrer';body.append(a)}card.append(art,body);grid.append(card)});s.append(grid)}
+function productDetailLabel(){return language==='ar'?'التفاصيل':language==='fr'?'Détails':'Details'}
+function products(s,kind){
+ const grid=E('div','products');
+ (app[kind]||[]).forEach(item=>{
+  const card=E('article','product'),art=E('div','product-image'),photo=img(item.image);
+  if(photo){const i=E('img');i.src=photo;i.alt=item['title_'+language]||item.title||'';i.loading='lazy';art.append(i)}
+  else art.textContent=kind==='books'?'📖':'📚';
+  const body=E('div','product-body');
+  if(item.language)body.append(E('span','pill',item.language.toUpperCase()));
+  body.append(E('h3','',item['title_'+language]||item.title_ar||item.title_en||item.title||''));
+  const d=item['description_'+language]||item.description_ar||item.description||'';
+  if(d)body.append(E('p','',d));
+  if(item.donation===true)body.append(E('p','price',txt('price')));
+  const details=link(productDetailLabel(),'#item/'+kind+'/'+encodeURIComponent(item.id||''),'button blue');
+  body.append(details);
+  card.append(art,body);grid.append(card);
+ });
+ s.append(grid)
+}
+function renderItemRoute(){
+ const match=location.hash.match(/^#item\\/(books|courses)\\/([^/?#]+)/);
+ const container=$('#dynamicSections');
+ if(!container)return;
+ if(!match)return;
+ const kind=match[1],id=decodeURIComponent(match[2]);
+ const item=(app[kind]||[]).find(x=>x.id===id);
+ if(!item)return;
+ container.replaceChildren();
+ const page=E('section','section product-detail-page');
+ const back=link(language==='ar'?'العودة إلى القائمة':language==='fr'?'Retour à la liste':'Back to list','#'+kind,'detail-back');
+ page.append(back);
+ const layout=E('div','product-detail-layout');
+ const art=E('div','product-detail-image');
+ const source=img(item.image);
+ if(source){const image=E('img');image.src=source;image.alt=item['title_'+language]||'';art.append(image)}
+ const content=E('div','product-detail-content');
+ content.append(E('h1','',item['title_'+language]||item.title_ar||item.title_en||''));
+ if(item.donation===true)content.append(E('p','price',txt('price')));
+ const details=item['details_'+language]||item['description_'+language]||'';
+ const paragraph=E('p','product-detail-description',details);
+ content.append(paragraph);
+ const target=url(item.url);
+ if(target){
+  const label=item['button_'+language]||(language==='ar'?'فلننطلق':language==='fr'?"C'est parti":"Let's begin");
+  const button=link(label,target,'button blue product-detail-cta');
+  button.target='_blank';button.rel='noopener noreferrer';content.append(button);
+ }
+ layout.append(art,content);page.append(layout);container.append(page);
+}
 function field(name,type='text',required=false,wide=false){const div=E('div','form-field'+(wide?' wide':''));const id='field-'+name+'-'+Math.random().toString(36).slice(2,7);const label=E('label','',txt(name));label.htmlFor=id;const input=type==='textarea'?E('textarea'):E('input');if(type!=='textarea')input.type=type;input.id=id;input.name=name;input.required=required;div.append(label,input);return div}
 function form(s,kind){const card=E('div','form-card'),f=E('form'),grid=E('div','form-grid');const names=kind==='private'?[['name','text',true],['email','email',true],['subject','text',true],['level','text',false]]:[['organization','text',true],['person','text',true],['email','email',true],['phone','tel',false]];names.forEach(([k,t,r])=>grid.append(field(k,t,r)));f.append(grid,field(kind==='private'?'details':'requirements','textarea',kind!=='private'));const button=E('button','button blue',txt('send'));button.type='submit';f.append(button);f.addEventListener('submit',e=>{e.preventDefault();const data=new FormData(f);const body=[...data].map(([k,v])=>txt(k)+': '+v).join('\n');const email=app.settings.email;if(!email)return;location.href='mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent(txt(kind+'_title'))+'&body='+encodeURIComponent(body)});card.append(f);s.append(card)}
 function contact(s){
@@ -84,7 +132,7 @@ function contact(s){
   s.append(layout);
 }
 function nav(){const desktop=$('#desktopNav'),bottom=$('#bottomNav'),footer=$('#footerLinks');desktop.replaceChildren();bottom.replaceChildren();footer.replaceChildren();const all=[['home','#home'],['courses','#courses'],['books','#books'],['private','#private'],['institutions','#institutions'],['contact','#contact']];all.forEach(([key,target])=>{if(key!=='home'&&app.settings['show_'+key]===false)return;desktop.append(link(txt(key),target,''));footer.append(link(txt(key),target,''))});footer.className='footer-links';NAV.forEach(([key,icon,target])=>{if(key!=='home'&&app.settings['show_'+key]===false)return;const a=link('',target,'');a.append(E('span','',icon),E('small','',txt(key)));bottom.append(a)});const privacy=E('button','',txt('privacy'));privacy.addEventListener('click',()=>$('#privacyDialog').showModal());footer.append(privacy)}
-function apply(){const settings=app.settings,root=document.documentElement;root.lang=language;root.dir=language==='ar'?'rtl':'ltr';const colors=[['color_navy','--navy'],['color_blue','--blue'],['color_orange','--orange'],['color_background','--surface']];colors.forEach(([key,variable])=>{if(/^#[0-9a-f]{6}$/i.test(settings[key]||''))root.style.setProperty(variable,settings[key])});const radius=Number(settings.corner_radius);if(Number.isFinite(radius)&&radius>=0&&radius<=70)root.style.setProperty('--radius',radius+'px');const logo=img(settings.logo);if(logo){$('#brandLogo').src=logo;$('#footerLogo').src=logo}const hero=img(settings.hero_image||settings.logo);if(hero)$('#heroImage').src=hero;document.title=(settings.brand||'My Prof')+' | '+(settings.tagline||'');setText();document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===language));nav();const container=$('#dynamicSections');container.replaceChildren();const order=[...new Set([...(Array.isArray(settings.section_order)?settings.section_order:[]),...SECTIONS])].filter(k=>SECTIONS.includes(k));order.forEach((key,index)=>{if(settings['show_'+key]===false)return;const s=section(key,index%2===0);if(key==='services')services(s);if(key==='about')about(s);if(key==='courses'||key==='books')products(s,key);if(key==='private'||key==='institutions')form(s,key);if(key==='contact')contact(s);container.append(s)});$('#year').textContent=new Date().getFullYear()}
+function apply(){const settings=app.settings,root=document.documentElement;root.lang=language;root.dir=language==='ar'?'rtl':'ltr';const colors=[['color_navy','--navy'],['color_blue','--blue'],['color_orange','--orange'],['color_background','--surface']];colors.forEach(([key,variable])=>{if(/^#[0-9a-f]{6}$/i.test(settings[key]||''))root.style.setProperty(variable,settings[key])});const radius=Number(settings.corner_radius);if(Number.isFinite(radius)&&radius>=0&&radius<=70)root.style.setProperty('--radius',radius+'px');const logo=img(settings.logo);if(logo){$('#brandLogo').src=logo;$('#footerLogo').src=logo}const hero=img(settings.hero_image||settings.logo);if(hero)$('#heroImage').src=hero;document.title=(settings.brand||'My Prof')+' | '+(settings.tagline||'');setText();document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===language));nav();const container=$('#dynamicSections');container.replaceChildren();const order=[...new Set([...(Array.isArray(settings.section_order)?settings.section_order:[]),...SECTIONS])].filter(k=>SECTIONS.includes(k));order.forEach((key,index)=>{if(settings['show_'+key]===false)return;const s=section(key,index%2===0);if(key==='services')services(s);if(key==='about')about(s);if(key==='courses'||key==='books')products(s,key);if(key==='private'||key==='institutions')form(s,key);if(key==='contact')contact(s);container.append(s)});renderItemRoute();$('#year').textContent=new Date().getFullYear()}
 async function start(){try{const r=await fetch('data/catalog.json',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);app=await r.json();language=localStorage.getItem('myprof-language')||app.settings.default_language||'ar';if(!app.texts[language])language='ar';apply()}catch(err){console.error('MyProf content could not be loaded',err);if(window.myprofLoadRetries === undefined)
 window.myprofLoadRetries = 0;
 if(window.myprofLoadRetries < 3){
@@ -111,6 +159,6 @@ window.addEventListener('scroll',()=>{
   navTick=true;
   requestAnimationFrame(()=>{navTick=false;updateAppNavigation()});
 },{passive:true});
-window.addEventListener('hashchange',()=>setTimeout(updateAppNavigation,100));
+window.addEventListener('hashchange',()=>{if(app)renderItemRoute();setTimeout(updateAppNavigation,100)});
 const navigationObserver=new MutationObserver(()=>updateAppNavigation());
 navigationObserver.observe(document.getElementById('dynamicSections'),{childList:true});
