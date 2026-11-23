@@ -13,7 +13,18 @@ function heading(section){const box=E('div','section-heading');const h=E('h2',''
 function section(id,alt=false){const s=E('section','section'+(alt?' alt':''));s.id=id;s.append(heading(id));return s}
 function link(name,href,cls){const a=E('a',cls,name);a.href=href;return a}
 function services(s){const items=[['courses','▶','service_course_title','service_course_text'],['books','▤','service_book_title','service_book_text'],['private','◉','service_private_title','service_private_text'],['institutions','⌂','service_institution_title','service_institution_text']];const grid=E('div','cards');items.forEach(([id,icon,title,description])=>{const c=link('', '#'+id,'card');c.append(E('span','icon',icon),E('h3','',txt(title)),E('p','',txt(description)));grid.append(c)});s.append(grid)}
-function about(s){const wrap=E('div','about-layout'),content=E('div'),visual=E('div','about-photo');content.append(E('p','',txt('about_text')));const features=E('div','features');['feature_one','feature_two','feature_three'].forEach(k=>features.append(E('span','',txt(k))));content.append(features);const photo=img(app.settings.about_image||app.settings.logo);if(photo){const i=E('img');i.src=photo;i.alt=app.settings.brand||'My Prof';visual.append(i)}wrap.append(content,visual);s.append(wrap)}
+function about(s){
+  const wrap=E('div','about-layout');
+  const content=E('div');
+  content.append(E('p','',txt('about_text')));
+  const features=E('div','features');
+  ['feature_one','feature_two','feature_three'].forEach(k=>{
+    features.append(E('span','',txt(k)));
+  });
+  content.append(features);
+  wrap.append(content);
+  s.append(wrap);
+}
 function products(s,kind){const grid=E('div','products');(app[kind]||[]).forEach(item=>{const card=E('article','product'),art=E('div','product-image'),photo=img(item.image);if(photo){const i=E('img');i.src=photo;i.alt=item['title_'+language]||item.title||'';i.loading='lazy';art.append(i)}else art.textContent=kind==='books'?'📖':'📚';const body=E('div','product-body');if(item.language)body.append(E('span','pill',item.language.toUpperCase()));body.append(E('h3','',item['title_'+language]||item.title_ar||item.title_en||item.title||''));const d=item['description_'+language]||item.description_ar||item.description||'';if(d)body.append(E('p','',d));if(item.price&&app.settings.show_prices!==false)body.append(E('p','price',txt('price')+': '+item.price));const target=url(item.url);if(target){const a=link(txt(kind==='books'?'buy_book':'buy_course'),target,'button blue');a.target='_blank';a.rel='noopener noreferrer';body.append(a)}card.append(art,body);grid.append(card)});s.append(grid)}
 function field(name,type='text',required=false,wide=false){const div=E('div','form-field'+(wide?' wide':''));const id='field-'+name+'-'+Math.random().toString(36).slice(2,7);const label=E('label','',txt(name));label.htmlFor=id;const input=type==='textarea'?E('textarea'):E('input');if(type!=='textarea')input.type=type;input.id=id;input.name=name;input.required=required;div.append(label,input);return div}
 function form(s,kind){const card=E('div','form-card'),f=E('form'),grid=E('div','form-grid');const names=kind==='private'?[['name','text',true],['email','email',true],['subject','text',true],['level','text',false]]:[['organization','text',true],['person','text',true],['email','email',true],['phone','tel',false]];names.forEach(([k,t,r])=>grid.append(field(k,t,r)));f.append(grid,field(kind==='private'?'details':'requirements','textarea',kind!=='private'));const button=E('button','button blue',txt('send'));button.type='submit';f.append(button);f.addEventListener('submit',e=>{e.preventDefault();const data=new FormData(f);const body=[...data].map(([k,v])=>txt(k)+': '+v).join('\n');const email=app.settings.email;if(!email)return;location.href='mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent(txt(kind+'_title'))+'&body='+encodeURIComponent(body)});card.append(f);s.append(card)}

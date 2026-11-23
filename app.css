@@ -181,3 +181,22 @@ dialog::backdrop{background:#0007}.dialog-head{display:flex;justify-content:spac
 .contact-submit{width:100%;border:0;min-height:49px}
 @media(max-width:970px){.contact-layout{grid-template-columns:1fr}.contact-intro{min-height:270px}}
 @media(max-width:760px){.contact-layout{gap:14px}.contact-intro,.contact-form-card{padding:23px 18px;border-radius:19px}.contact-intro{min-height:0}.contact-intro h3{font-size:24px}}
+
+
+/* MyProf logo white background */
+.hero-visual {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  backdrop-filter: none !important;
+}
+.hero-visual img {
+  filter: none !important;
+}
+
+/* About section without repeated logo */
+.about-layout {
+  grid-template-columns: 1fr !important;
+}
+.about-photo {
+  display: none !important;
+}
