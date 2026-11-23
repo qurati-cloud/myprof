@@ -757,6 +757,9 @@ content:
       - name: social_youtube
         label: social_youtube
         type: string
+      - name: social_whatsapp
+        label: social_whatsapp
+        type: string
       - name: social_tiktok
         label: social_tiktok
         type: string
