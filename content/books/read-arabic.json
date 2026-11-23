@@ -12,5 +12,8 @@
   "price": "5$",
   "url": "https://payhip.com/b/Hr9bz",
   "published": true,
-  "order": 1
+  "order": 1,
+  "image_ar": "/assets/uploads/Arabic Reading from Scratch Poster.png",
+  "image_en": "/assets/uploads/Arabic Reading from Scratch Poster.png",
+  "image_fr": "/assets/uploads/Arabic Reading from Scratch Poster.png"
 }
