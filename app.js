@@ -17,7 +17,61 @@ function about(s){const wrap=E('div','about-layout'),content=E('div'),visual=E('
 function products(s,kind){const grid=E('div','products');(app[kind]||[]).forEach(item=>{const card=E('article','product'),art=E('div','product-image'),photo=img(item.image);if(photo){const i=E('img');i.src=photo;i.alt=item['title_'+language]||item.title||'';i.loading='lazy';art.append(i)}else art.textContent=kind==='books'?'📖':'📚';const body=E('div','product-body');if(item.language)body.append(E('span','pill',item.language.toUpperCase()));body.append(E('h3','',item['title_'+language]||item.title_ar||item.title_en||item.title||''));const d=item['description_'+language]||item.description_ar||item.description||'';if(d)body.append(E('p','',d));if(item.price&&app.settings.show_prices!==false)body.append(E('p','price',txt('price')+': '+item.price));const target=url(item.url);if(target){const a=link(txt(kind==='books'?'buy_book':'buy_course'),target,'button blue');a.target='_blank';a.rel='noopener noreferrer';body.append(a)}card.append(art,body);grid.append(card)});s.append(grid)}
 function field(name,type='text',required=false,wide=false){const div=E('div','form-field'+(wide?' wide':''));const id='field-'+name+'-'+Math.random().toString(36).slice(2,7);const label=E('label','',txt(name));label.htmlFor=id;const input=type==='textarea'?E('textarea'):E('input');if(type!=='textarea')input.type=type;input.id=id;input.name=name;input.required=required;div.append(label,input);return div}
 function form(s,kind){const card=E('div','form-card'),f=E('form'),grid=E('div','form-grid');const names=kind==='private'?[['name','text',true],['email','email',true],['subject','text',true],['level','text',false]]:[['organization','text',true],['person','text',true],['email','email',true],['phone','tel',false]];names.forEach(([k,t,r])=>grid.append(field(k,t,r)));f.append(grid,field(kind==='private'?'details':'requirements','textarea',kind!=='private'));const button=E('button','button blue',txt('send'));button.type='submit';f.append(button);f.addEventListener('submit',e=>{e.preventDefault();const data=new FormData(f);const body=[...data].map(([k,v])=>txt(k)+': '+v).join('\n');const email=app.settings.email;if(!email)return;location.href='mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent(txt(kind+'_title'))+'&body='+encodeURIComponent(body)});card.append(f);s.append(card)}
-function contact(s){const c=E('div','contact-box'),email=app.settings.email||'',web=url(app.settings.website);if(email)c.append(link(email,'mailto:'+email,''));if(web)c.append(link(web,web,''));const social=E('div','contact-social');[['Instagram','social_instagram'],['Facebook','social_facebook'],['YouTube','social_youtube'],['TikTok','social_tiktok']].forEach(([label,key])=>{const u=url(app.settings[key]);if(u){const a=link(label,u,'');a.target='_blank';a.rel='noopener noreferrer';social.append(a)}});c.append(social);s.append(c)}
+function contact(s){
+  const layout=E('div','contact-layout');
+  const intro=E('div','contact-intro');
+  intro.append(E('span','contact-kicker',txt('contact_kicker')));
+  intro.append(E('h3','',txt('contact_heading')));
+  intro.append(E('p','',txt('contact_intro')));
+  const featureList=E('div','contact-points');
+  for(const key of ['contact_point_one','contact_point_two','contact_point_three']){
+    featureList.append(E('div','contact-point','✓  '+txt(key)));
+  }
+  intro.append(featureList);
+  const social=E('div','contact-social');
+  [['Instagram','social_instagram'],['Facebook','social_facebook'],['YouTube','social_youtube'],['TikTok','social_tiktok']].forEach(([label,key])=>{
+    const target=url(app.settings[key]);
+    if(target&&target.startsWith('https:')){
+      const a=link(label,target,'contact-social-link');a.target='_blank';a.rel='noopener noreferrer';social.append(a);
+    }
+  });
+  if(social.childElementCount)intro.append(social);
+  const card=E('div','contact-form-card');
+  card.append(E('h3','',txt('contact_form_title')));
+  card.append(E('p','contact-subtitle',txt('contact_form_description')));
+  const f=E('form','contact-form');
+  const fields=[['contact_name','text',true],['contact_email','email',true],['contact_subject','text',true],['contact_message','textarea',true]];
+  fields.forEach(([key,type,required])=>{
+    const wrap=E('div','form-field');
+    const label=E('label','',txt(key));
+    const id='contact-'+key;
+    label.htmlFor=id;
+    const input=type==='textarea'?E('textarea'):E('input');
+    if(type!=='textarea')input.type=type;
+    input.id=id;input.name=key;input.required=required;
+    if(type==='textarea')input.rows=5;
+    wrap.append(label,input);f.append(wrap);
+  });
+  const notice=E('p','contact-notice',txt('contact_mail_notice'));
+  const submit=E('button','button blue contact-submit',txt('contact_send'));
+  submit.type='submit';
+  f.append(notice,submit);
+  f.addEventListener('submit',e=>{
+    e.preventDefault();
+    const destination=app.settings.email;
+    if(typeof destination!=='string'||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(destination)){
+      alert(txt('contact_mail_missing'));return;
+    }
+    const values=new FormData(f);
+    const subject=String(values.get('contact_subject')||'');
+    const body=fields.map(([key])=>txt(key)+': '+String(values.get(key)||'')).join('\n\n');
+    const mail='mailto:'+destination+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+    window.location.href=mail;
+  });
+  card.append(f);
+  layout.append(intro,card);
+  s.append(layout);
+}
 function nav(){const desktop=$('#desktopNav'),bottom=$('#bottomNav'),footer=$('#footerLinks');desktop.replaceChildren();bottom.replaceChildren();footer.replaceChildren();const all=[['home','#home'],['courses','#courses'],['books','#books'],['private','#private'],['institutions','#institutions'],['contact','#contact']];all.forEach(([key,target])=>{if(key!=='home'&&app.settings['show_'+key]===false)return;desktop.append(link(txt(key),target,''));footer.append(link(txt(key),target,''))});footer.className='footer-links';NAV.forEach(([key,icon,target])=>{if(key!=='home'&&app.settings['show_'+key]===false)return;const a=link('',target,'');a.append(E('span','',icon),E('small','',txt(key)));bottom.append(a)});const privacy=E('button','',txt('privacy'));privacy.addEventListener('click',()=>$('#privacyDialog').showModal());footer.append(privacy)}
 function apply(){const settings=app.settings,root=document.documentElement;root.lang=language;root.dir=language==='ar'?'rtl':'ltr';const colors=[['color_navy','--navy'],['color_blue','--blue'],['color_orange','--orange'],['color_background','--surface']];colors.forEach(([key,variable])=>{if(/^#[0-9a-f]{6}$/i.test(settings[key]||''))root.style.setProperty(variable,settings[key])});const radius=Number(settings.corner_radius);if(Number.isFinite(radius)&&radius>=0&&radius<=70)root.style.setProperty('--radius',radius+'px');const logo=img(settings.logo);if(logo){$('#brandLogo').src=logo;$('#footerLogo').src=logo}const hero=img(settings.hero_image||settings.logo);if(hero)$('#heroImage').src=hero;document.title=(settings.brand||'My Prof')+' | '+(settings.tagline||'');setText();document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===language));nav();const container=$('#dynamicSections');container.replaceChildren();const order=[...new Set([...(Array.isArray(settings.section_order)?settings.section_order:[]),...SECTIONS])].filter(k=>SECTIONS.includes(k));order.forEach((key,index)=>{if(settings['show_'+key]===false)return;const s=section(key,index%2===0);if(key==='services')services(s);if(key==='about')about(s);if(key==='courses'||key==='books')products(s,key);if(key==='private'||key==='institutions')form(s,key);if(key==='contact')contact(s);container.append(s)});$('#year').textContent=new Date().getFullYear()}
 async function start(){try{const r=await fetch('data/catalog.json',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);app=await r.json();language=localStorage.getItem('myprof-language')||app.settings.default_language||'ar';if(!app.texts[language])language='ar';apply()}catch(err){console.error('MyProf content could not be loaded',err);$('#dynamicSections').append(E('p','load-error','Unable to load site content. Please try again.'))}}

@@ -177,6 +177,51 @@ content:
       - name: more
         label: more
         type: string
+      - name: contact_kicker
+        label: contact_kicker
+        type: string
+      - name: contact_heading
+        label: contact_heading
+        type: string
+      - name: contact_intro
+        label: contact_intro
+        type: text
+      - name: contact_point_one
+        label: contact_point_one
+        type: string
+      - name: contact_point_two
+        label: contact_point_two
+        type: string
+      - name: contact_point_three
+        label: contact_point_three
+        type: string
+      - name: contact_form_title
+        label: contact_form_title
+        type: string
+      - name: contact_form_description
+        label: contact_form_description
+        type: string
+      - name: contact_name
+        label: contact_name
+        type: string
+      - name: contact_email
+        label: contact_email
+        type: string
+      - name: contact_subject
+        label: contact_subject
+        type: string
+      - name: contact_message
+        label: contact_message
+        type: string
+      - name: contact_mail_notice
+        label: contact_mail_notice
+        type: text
+      - name: contact_send
+        label: contact_send
+        type: string
+      - name: contact_mail_missing
+        label: contact_mail_missing
+        type: string
   - name: texts_en
     label: English texts
     type: file
@@ -351,6 +396,51 @@ content:
       - name: more
         label: more
         type: string
+      - name: contact_kicker
+        label: contact_kicker
+        type: string
+      - name: contact_heading
+        label: contact_heading
+        type: string
+      - name: contact_intro
+        label: contact_intro
+        type: text
+      - name: contact_point_one
+        label: contact_point_one
+        type: string
+      - name: contact_point_two
+        label: contact_point_two
+        type: string
+      - name: contact_point_three
+        label: contact_point_three
+        type: string
+      - name: contact_form_title
+        label: contact_form_title
+        type: string
+      - name: contact_form_description
+        label: contact_form_description
+        type: string
+      - name: contact_name
+        label: contact_name
+        type: string
+      - name: contact_email
+        label: contact_email
+        type: string
+      - name: contact_subject
+        label: contact_subject
+        type: string
+      - name: contact_message
+        label: contact_message
+        type: string
+      - name: contact_mail_notice
+        label: contact_mail_notice
+        type: text
+      - name: contact_send
+        label: contact_send
+        type: string
+      - name: contact_mail_missing
+        label: contact_mail_missing
+        type: string
   - name: texts_fr
     label: Textes français
     type: file
@@ -524,6 +614,51 @@ content:
         type: string
       - name: more
         label: more
+        type: string
+      - name: contact_kicker
+        label: contact_kicker
+        type: string
+      - name: contact_heading
+        label: contact_heading
+        type: string
+      - name: contact_intro
+        label: contact_intro
+        type: text
+      - name: contact_point_one
+        label: contact_point_one
+        type: string
+      - name: contact_point_two
+        label: contact_point_two
+        type: string
+      - name: contact_point_three
+        label: contact_point_three
+        type: string
+      - name: contact_form_title
+        label: contact_form_title
+        type: string
+      - name: contact_form_description
+        label: contact_form_description
+        type: string
+      - name: contact_name
+        label: contact_name
+        type: string
+      - name: contact_email
+        label: contact_email
+        type: string
+      - name: contact_subject
+        label: contact_subject
+        type: string
+      - name: contact_message
+        label: contact_message
+        type: string
+      - name: contact_mail_notice
+        label: contact_mail_notice
+        type: text
+      - name: contact_send
+        label: contact_send
+        type: string
+      - name: contact_mail_missing
+        label: contact_mail_missing
         type: string
   - name: settings
     label: الإعدادات والتصميم
