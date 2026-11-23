@@ -66,7 +66,7 @@
   "contact_email": "Your email address",
   "contact_subject": "Subject",
   "contact_message": "Your message",
-  "contact_mail_notice": "Your message is delivered directly to the MyProf team.",
+  "contact_mail_notice": "",
   "contact_send": "Send message",
   "contact_mail_missing": "Contact is not configured yet. Please try later."
 }

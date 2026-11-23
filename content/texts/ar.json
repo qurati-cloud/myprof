@@ -66,7 +66,7 @@
   "contact_email": "بريدك الإلكتروني",
   "contact_subject": "موضوع الرسالة",
   "contact_message": "رسالتك",
-  "contact_mail_notice": "تُرسل رسالتك مباشرةً من الموقع إلى إدارة MyProf.",
+  "contact_mail_notice": "",
   "contact_send": "إرسال الرسالة",
   "contact_mail_missing": "خدمة التواصل غير مهيأة حاليًا. حاول لاحقًا."
 }
