@@ -1,3 +1,4 @@
+import { ADMIN_HTML, ADMIN_JS, ADMIN_CSS } from "./admin-page.js";
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
@@ -85,6 +86,22 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders(request, env) });
     }
 
+    if (method === "GET" && ["/admin", "/admin/"].includes(path)) {
+      return new Response(ADMIN_HTML, { headers: {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "content-security-policy": "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+        "x-frame-options": "DENY"
+      }});
+    }
+    if (method === "GET" && path === "/admin/assets/admin.js") {
+      return new Response(ADMIN_JS, { headers: { "content-type": "application/javascript; charset=utf-8", "cache-control": "no-store", "x-content-type-options": "nosniff" }});
+    }
+    if (method === "GET" && path === "/admin/assets/admin.css") {
+      return new Response(ADMIN_CSS, { headers: { "content-type": "text/css; charset=utf-8", "cache-control": "public, max-age=3600", "x-content-type-options": "nosniff" }});
+    }
+
     if (path === "/" && method === "GET") {
       return json(request, env, { success: true, service: "MyProf AI API", status: "online" });
     }
@@ -151,7 +168,7 @@ export default {
         await env.DB.prepare("INSERT INTO admin_sessions (id_hash,user_id,expires_at) VALUES (?,?,?)").bind(await sha256(token), user.id, expires).run();
         await env.DB.prepare("UPDATE admin_users SET last_login_at=CURRENT_TIMESTAMP WHERE id=?").bind(user.id).run();
         return json(request, env, { success: true, user: { email: user.email } }, 200, {
-          "set-cookie": "mp_admin=" + encodeURIComponent(token) + "; HttpOnly; Secure; SameSite=None; Path=/api/admin; Max-Age=28800"
+          "set-cookie": "mp_admin=" + encodeURIComponent(token) + "; HttpOnly; Secure; SameSite=Strict; Path=/api/admin; Max-Age=28800"
         });
       }
 
@@ -159,7 +176,7 @@ export default {
         const token = getCookie(request, "mp_admin");
         if (token) await env.DB.prepare("DELETE FROM admin_sessions WHERE id_hash=?").bind(await sha256(token)).run();
         return json(request, env, { success: true }, 200, {
-          "set-cookie": "mp_admin=; HttpOnly; Secure; SameSite=None; Path=/api/admin; Max-Age=0"
+          "set-cookie": "mp_admin=; HttpOnly; Secure; SameSite=Strict; Path=/api/admin; Max-Age=0"
         });
       }
 
