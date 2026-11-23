@@ -126,7 +126,7 @@ export default {
     }
 
     if (path === "/api/health" && method === "GET") {
-      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "1.3" });
+      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "1.4" });
     }
 
     if (path.startsWith("/media/") && method === "GET") {
@@ -158,22 +158,37 @@ export default {
         if (supplied.length < 20 || supplied !== env.ADMIN_SETUP_TOKEN) {
           return json(request, env, { success: false, message: "Unauthorized" }, 401);
         }
-        const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admin_users").first();
-        if (Number(count?.n || 0) > 0) return json(request, env, { success: false, message: "Admin already initialized" }, 409);
-        const body = await readJson(request);
-        const email = String(body.email || "").trim().toLowerCase();
-        const password = String(body.password || "");
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 14) {
-          return json(request, env, { success: false, message: "Use a valid email and a password of at least 14 characters" }, 400);
+        let stage = "DB_CHECK";
+        try {
+          const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admin_users").first();
+          if (Number(count?.n || 0) > 0) return json(request, env, { success: false, message: "Admin already initialized" }, 409);
+          stage = "INPUT";
+          const body = await readJson(request);
+          const email = String(body.email || "").trim().toLowerCase();
+          const password = String(body.password || "");
+          if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || password.length < 14) {
+            return json(request, env, { success: false, message: "Use a valid email and a password of at least 14 characters" }, 400);
+          }
+          stage = "PASSWORD_HASH";
+          const { salt, hash } = await hashPassword(password);
+          const id = crypto.randomUUID();
+          stage = "ADMIN_INSERT";
+          await env.DB.prepare("INSERT INTO admin_users (id,email,password_hash) VALUES (?,?,?)").bind(id, email, salt + ":" + hash).run();
+          stage = "AUDIT_INSERT";
+          try {
+            await env.DB.prepare("INSERT INTO audit_log (id,actor_user_id,action,target_type,target_id) VALUES (?,?,?,?,?)")
+              .bind(crypto.randomUUID(), id, "admin_initialized", "admin", id).run();
+          } catch (auditError) {
+            console.error("MyProf admin setup audit insert failed:", auditError);
+          }
+          return json(request, env, { success: true, message: "Admin account created. Remove ADMIN_SETUP_TOKEN after setup." }, 201);
+        } catch (setupError) {
+          console.error("MyProf admin setup failed at " + stage, setupError);
+          return json(request, env, { success: false, message: "Setup could not be completed", error_code: "SETUP_" + stage }, 500);
         }
-        const { salt, hash } = await hashPassword(password);
-        const id = crypto.randomUUID();
-        await env.DB.prepare("INSERT INTO admin_users (id,email,password_hash) VALUES (?,?,?)").bind(id, email, salt + ":" + hash).run();
-        await env.DB.prepare("INSERT INTO audit_log (id,actor_user_id,action,target_type,target_id) VALUES (?,?,?,?,?)").bind(crypto.randomUUID(), id, "admin_initialized", "admin", id).run();
-        return json(request, env, { success: true, message: "Admin account created. Remove ADMIN_SETUP_TOKEN after setup." }, 201);
       }
 
-      if (path === "/api/admin/login" && method === "POST") {
+            if (path === "/api/admin/login" && method === "POST") {
         const body = await readJson(request);
         const email = String(body.email || "").trim().toLowerCase();
         const password = String(body.password || "");
