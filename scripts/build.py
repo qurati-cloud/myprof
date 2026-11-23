@@ -4,7 +4,7 @@ root=Path(__file__).resolve().parent.parent
 out=root/'_site'
 if out.exists(): shutil.rmtree(out)
 out.mkdir()
-for name in ['index.html','app.css','app.js','manifest.webmanifest','sw.js']:
+for name in ['index.html','admin.html','app.css','app.js','manifest.webmanifest','sw.js']:
     shutil.copy2(root/name,out/name)
 shutil.copytree(root/'assets',out/'assets')
 if (root/'CNAME').exists(): shutil.copy2(root/'CNAME',out/'CNAME')
