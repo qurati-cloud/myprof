@@ -16,7 +16,7 @@
   "default_language": "ar",
   "show_prices": true,
   "show_services": true,
-  "show_about": true,
+  "show_about": false,
   "show_courses": true,
   "show_books": true,
   "show_private": true,
@@ -24,7 +24,6 @@
   "show_contact": true,
   "section_order": [
     "services",
-    "about",
     "courses",
     "books",
     "private",
