@@ -1,4 +1,5 @@
-import { ADMIN_HTML, ADMIN_JS, ADMIN_CSS, SETUP_HTML, SETUP_JS } from "./admin-page.js";
+import { SETUP_HTML, SETUP_JS } from "./admin-page.js";
+import { ADMIN_HTML, ADMIN_JS, ADMIN_CSS } from "./admin-v2.js";
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
@@ -126,7 +127,7 @@ export default {
     }
 
     if (path === "/api/health" && method === "GET") {
-      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "2.0" });
+      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "2.1" });
     }
 
     if (path.startsWith("/media/") && method === "GET") {
@@ -220,6 +221,16 @@ export default {
 
         if (path === "/api/admin/me" && method === "GET") {
           return json(request, env, { success: true, user: { email: admin.email } });
+        }
+
+        if (path === "/api/admin/public-catalog" && method === "GET") {
+          const source=await fetch("https://myprof.ca/data/catalog.json", {
+            headers: { "Accept": "application/json" },
+            cf: { cacheTtl: 120 }
+          });
+          if (!source.ok) return json(request,env,{success:false,message:"تعذر تحميل كتالوج الموقع."},502);
+          const catalog=await source.json();
+          return json(request,env,{success:true,books:catalog.books||[],courses:catalog.courses||[]});
         }
 
         if (path === "/api/admin/products" && method === "GET") {
