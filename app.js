@@ -22,3 +22,25 @@ function nav(){const desktop=$('#desktopNav'),bottom=$('#bottomNav'),footer=$('#
 function apply(){const settings=app.settings,root=document.documentElement;root.lang=language;root.dir=language==='ar'?'rtl':'ltr';const colors=[['color_navy','--navy'],['color_blue','--blue'],['color_orange','--orange'],['color_background','--surface']];colors.forEach(([key,variable])=>{if(/^#[0-9a-f]{6}$/i.test(settings[key]||''))root.style.setProperty(variable,settings[key])});const radius=Number(settings.corner_radius);if(Number.isFinite(radius)&&radius>=0&&radius<=70)root.style.setProperty('--radius',radius+'px');const logo=img(settings.logo);if(logo){$('#brandLogo').src=logo;$('#footerLogo').src=logo}const hero=img(settings.hero_image||settings.logo);if(hero)$('#heroImage').src=hero;document.title=(settings.brand||'My Prof')+' | '+(settings.tagline||'');setText();document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===language));nav();const container=$('#dynamicSections');container.replaceChildren();const order=[...new Set([...(Array.isArray(settings.section_order)?settings.section_order:[]),...SECTIONS])].filter(k=>SECTIONS.includes(k));order.forEach((key,index)=>{if(settings['show_'+key]===false)return;const s=section(key,index%2===0);if(key==='services')services(s);if(key==='about')about(s);if(key==='courses'||key==='books')products(s,key);if(key==='private'||key==='institutions')form(s,key);if(key==='contact')contact(s);container.append(s)});$('#year').textContent=new Date().getFullYear()}
 async function start(){try{const r=await fetch('data/catalog.json',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);app=await r.json();language=localStorage.getItem('myprof-language')||app.settings.default_language||'ar';if(!app.texts[language])language='ar';apply()}catch(err){console.error('MyProf content could not be loaded',err);$('#dynamicSections').append(E('p','load-error','Unable to load site content. Please try again.'))}}
 document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>{if(!app)return;language=b.dataset.lang;localStorage.setItem('myprof-language',language);apply()}));$('#closePrivacy').addEventListener('click',()=>$('#privacyDialog').close());$('#privacyDialog').addEventListener('click',e=>{if(e.target.id==='privacyDialog')e.target.close()});start();if('serviceWorker'in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(console.warn));
+
+/* MyProf active navigation enhancement */
+function updateAppNavigation(){
+  const sections=['home',...SECTIONS].filter(id=>document.getElementById(id));
+  const y=window.scrollY+Math.min(window.innerHeight*.3,200);
+  let current='home';
+  for(const id of sections){const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top+window.scrollY<=y)current=id;}
+  for(const a of document.querySelectorAll('#desktopNav a,#bottomNav a')){
+    const selected=a.getAttribute('href')==='#'+current;
+    a.classList.toggle('active',selected);
+    if(selected)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');
+  }
+}
+let navTick=false;
+window.addEventListener('scroll',()=>{
+  if(navTick)return;
+  navTick=true;
+  requestAnimationFrame(()=>{navTick=false;updateAppNavigation()});
+},{passive:true});
+window.addEventListener('hashchange',()=>setTimeout(updateAppNavigation,100));
+const navigationObserver=new MutationObserver(()=>updateAppNavigation());
+navigationObserver.observe(document.getElementById('dynamicSections'),{childList:true});
