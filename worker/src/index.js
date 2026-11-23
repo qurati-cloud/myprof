@@ -8,7 +8,7 @@ const JSON_HEADERS = {
 
 function corsHeaders(request, env) {
   const origin = request.headers.get("Origin") || "";
-  const allowed = [env.APP_ORIGIN || "https://myprof.ca", "https://www.myprof.ca"];
+  const allowed = [new URL(request.url).origin, env.APP_ORIGIN || "https://myprof.ca", "https://www.myprof.ca"];
   const headers = new Headers(JSON_HEADERS);
   headers.set("vary", "Origin");
   if (allowed.includes(origin)) {
@@ -79,7 +79,7 @@ export default {
     const path = url.pathname;
     const method = request.method;
     const origin = request.headers.get("Origin") || "";
-    const allowed = [env.APP_ORIGIN || "https://myprof.ca", "https://www.myprof.ca"];
+    const allowed = [new URL(request.url).origin, env.APP_ORIGIN || "https://myprof.ca", "https://www.myprof.ca"];
 
     if (method === "OPTIONS") {
       if (!allowed.includes(origin)) return new Response(null, { status: 403 });
