@@ -29,3 +29,13 @@
 @media(max-width:1000px){.mp-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.mp-page{padding:16px 2px 25px}.mp-item-detail{grid-template-columns:1fr;gap:16px;padding:15px;border-radius:20px}.mp-detail-cover{min-height:250px;aspect-ratio:4/3}.mp-detail-info{padding:8px}.mp-catalog-grid{gap:12px}.mp-catalog-cover{height:165px}.mp-catalog-body{padding:13px}.mp-catalog-body h3{font-size:16px}.mp-summary{font-size:12px}.mp-main-cta{width:100%}.mp-catalog-heading h1{font-size:28px}}
 @media(max-width:380px){.mp-catalog-grid{grid-template-columns:1fr}.mp-catalog-cover{height:240px}}
+
+
+/* Keep cover artwork separate from product information and price. */
+.mp-catalog-card{position:relative;isolation:isolate;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+.mp-catalog-card>.mp-catalog-cover{position:relative!important;inset:auto!important;flex:0 0 245px!important;width:100%!important;height:245px!important;margin:0!important;z-index:0!important;overflow:hidden!important}
+.mp-catalog-card>.mp-catalog-cover img{display:block!important;position:static!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;padding:12px!important}
+.mp-catalog-card>.mp-catalog-body{position:relative!important;inset:auto!important;z-index:1!important;display:flex!important;flex:1 0 auto!important;flex-direction:column!important;width:100%!important;height:auto!important;min-height:0!important;margin:0!important;padding:18px!important;background:#fff!important;transform:none!important}
+.mp-catalog-card .mp-card-price{position:static!important;display:block!important;inset:auto!important;margin:8px 0 14px!important;color:var(--navy)!important;background:transparent!important}
+.mp-catalog-card .mp-catalog-cta{position:static!important;margin-top:auto!important}
+@media(max-width:760px){.mp-catalog-card>.mp-catalog-cover{flex-basis:165px!important;height:165px!important}.mp-catalog-card>.mp-catalog-body{padding:13px!important}}
