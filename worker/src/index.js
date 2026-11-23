@@ -126,7 +126,7 @@ export default {
     }
 
     if (path === "/api/health" && method === "GET") {
-      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "1.4" });
+      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "1.5" });
     }
 
     if (path.startsWith("/media/") && method === "GET") {
@@ -166,7 +166,7 @@ export default {
           const body = await readJson(request);
           const email = String(body.email || "").trim().toLowerCase();
           const password = String(body.password || "");
-          if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || password.length < 14) {
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || [...password].length < 14) {
             return json(request, env, { success: false, message: "Use a valid email and a password of at least 14 characters" }, 400);
           }
           stage = "PASSWORD_HASH";
