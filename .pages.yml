@@ -785,6 +785,24 @@ content:
       - name: description_fr
         label: description_fr
         type: text
+      - name: details_ar
+        label: تفاصيل المنتج - العربية
+        type: text
+      - name: details_en
+        label: تفاصيل المنتج - English
+        type: text
+      - name: details_fr
+        label: تفاصيل المنتج - Français
+        type: text
+      - name: button_ar
+        label: نص زر الانتقال - العربية
+        type: string
+      - name: button_en
+        label: نص زر الانتقال - English
+        type: string
+      - name: button_fr
+        label: نص زر الانتقال - Français
+        type: string
       - name: image
         label: image
         type: image
@@ -828,6 +846,24 @@ content:
       - name: description_fr
         label: description_fr
         type: text
+      - name: details_ar
+        label: تفاصيل المنتج - العربية
+        type: text
+      - name: details_en
+        label: تفاصيل المنتج - English
+        type: text
+      - name: details_fr
+        label: تفاصيل المنتج - Français
+        type: text
+      - name: button_ar
+        label: نص زر الانتقال - العربية
+        type: string
+      - name: button_en
+        label: نص زر الانتقال - English
+        type: string
+      - name: button_fr
+        label: نص زر الانتقال - Français
+        type: string
       - name: image
         label: image
         type: image

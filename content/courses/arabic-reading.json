@@ -10,5 +10,11 @@
   "url": "https://www.udemy.com/course/myprof_arabic01/?couponCode=ALAATARABAH",
   "language": "en",
   "published": true,
-  "order": 1
+  "order": 1,
+  "details_ar": "كورس مسجل لتعلم قراءة الحروف والكلمات العربية من البداية، مع شرح باللغة الإنجليزية. يمكنك الاطلاع على المحتوى والتسجيل عبر الرابط الخارجي.",
+  "details_en": "A recorded beginner course introducing Arabic letters, words and reading, explained in English. Visit the course platform for full enrollment information.",
+  "details_fr": "Un cours enregistré pour débuter la lecture en arabe avec des explications en anglais. Consultez la plateforme pour vous inscrire.",
+  "button_ar": "فلننطلق",
+  "button_en": "Let's go",
+  "button_fr": "C'est parti"
 }

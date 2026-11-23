@@ -13,7 +13,9 @@ def items(folder):
     found=[]
     for f in (root/'content'/folder).glob('*.json'):
         obj=data(f.relative_to(root))
-        if isinstance(obj,dict) and obj.get('published',True): found.append(obj)
+        if isinstance(obj,dict) and obj.get('published',True):
+            obj['id']=f.stem
+            found.append(obj)
     return sorted(found,key=lambda item:(item.get('order',999),item.get('title_en','')))
 catalog={'settings':data('content/site.json'),'texts':{l:data('content/texts/'+l+'.json') for l in ('ar','en','fr')},'courses':items('courses'),'books':items('books')}
 (out/'data').mkdir()
