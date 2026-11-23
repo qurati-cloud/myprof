@@ -8,7 +8,7 @@ APP_ORIGIN = "https://myprof.ca"
 [[d1_databases]]
 binding = "DB"
 database_name = "myprof-ai-db"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "e04f6485-77b9-4437-9b07-e6e9323301e4"
 
 [[r2_buckets]]
 binding = "MEDIA"
