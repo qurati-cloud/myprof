@@ -45,7 +45,7 @@ function products(s,kind){
  s.append(grid)
 }
 function renderItemRoute(){
- const match=location.hash.match(/^#item\\/(books|courses)\\/([^/?#]+)/);
+ const match=location.hash.match(/^#item\/(books|courses)\/([^/?#]+)/);
  const container=$('#dynamicSections');
  if(!container)return;
  if(!match)return;
