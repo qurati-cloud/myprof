@@ -39,3 +39,34 @@
 .mp-catalog-card .mp-card-price{position:static!important;display:block!important;inset:auto!important;margin:8px 0 14px!important;color:var(--navy)!important;background:transparent!important}
 .mp-catalog-card .mp-catalog-cta{position:static!important;margin-top:auto!important}
 @media(max-width:760px){.mp-catalog-card>.mp-catalog-cover{flex-basis:165px!important;height:165px!important}.mp-catalog-card>.mp-catalog-body{padding:13px!important}}
+
+
+/* Full portrait book cover: preserve the complete artwork in catalog cards. */
+.mp-catalog-card > .mp-catalog-cover {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+  width:100% !important;
+  height:auto !important;
+  aspect-ratio:3 / 4 !important;
+  overflow:hidden !important;
+  background:#fff !important;
+}
+.mp-catalog-card > .mp-catalog-cover img {
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+  padding:0 !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+}
+@media(max-width:760px){
+  .mp-catalog-card > .mp-catalog-cover {
+    height:auto !important;
+    flex-basis:auto !important;
+    aspect-ratio:3 / 4 !important;
+  }
+}
