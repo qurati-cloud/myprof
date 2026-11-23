@@ -200,3 +200,20 @@ dialog::backdrop{background:#0007}.dialog-head{display:flex;justify-content:spac
 .about-photo {
   display: none !important;
 }
+
+
+/* MyProf footer logo: clear white background */
+.footer-brand img,
+#footerLogo {
+    display: block !important;
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    padding: 14px !important;
+    box-sizing: content-box !important;
+    width: min(220px, 80%) !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    margin: 0 auto 16px !important;
+    filter: none !important;
+}
