@@ -803,8 +803,17 @@ content:
       - name: button_fr
         label: نص زر الانتقال - Français
         type: string
+      - name: image_ar
+        label: صورة الغلاف - العربية (اختياري)
+        type: image
+      - name: image_en
+        label: Cover image - English (optional)
+        type: image
+      - name: image_fr
+        label: Image de couverture - Français (facultatif)
+        type: image
       - name: image
-        label: image
+        label: صورة الغلاف الافتراضية
         type: image
       - name: price
         label: التبرع
@@ -864,8 +873,17 @@ content:
       - name: button_fr
         label: نص زر الانتقال - Français
         type: string
+      - name: image_ar
+        label: صورة الغلاف - العربية (اختياري)
+        type: image
+      - name: image_en
+        label: Cover image - English (optional)
+        type: image
+      - name: image_fr
+        label: Image de couverture - Français (facultatif)
+        type: image
       - name: image
-        label: image
+        label: صورة الغلاف الافتراضية
         type: image
       - name: price
         label: التبرع
