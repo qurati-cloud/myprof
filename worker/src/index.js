@@ -6,6 +6,14 @@ const JSON_HEADERS = {
   "referrer-policy": "no-referrer"
 };
 
+function isFirstParty(request) {
+  const requestOrigin = new URL(request.url).origin;
+  const clientOrigin = request.headers.get("Origin");
+  return clientOrigin === requestOrigin || (
+    request.headers.get("Sec-Fetch-Site") === "same-origin" &&
+    (!clientOrigin || clientOrigin === requestOrigin)
+  );
+}
 function corsHeaders(request, env) {
   const origin = request.headers.get("Origin") || "";
   const allowed = [new URL(request.url).origin, env.APP_ORIGIN || "https://myprof.ca", "https://www.myprof.ca"];
@@ -82,7 +90,7 @@ export default {
     const allowed = [new URL(request.url).origin, env.APP_ORIGIN || "https://myprof.ca", "https://www.myprof.ca"];
 
     if (method === "OPTIONS") {
-      if (!allowed.includes(origin)) return new Response(null, { status: 403 });
+      if (!allowed.includes(origin) && !isFirstParty(request)) return new Response(null, { status: 403 });
       return new Response(null, { status: 204, headers: corsHeaders(request, env) });
     }
 
@@ -118,7 +126,7 @@ export default {
     }
 
     if (path === "/api/health" && method === "GET") {
-      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "1.2" });
+      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "1.3" });
     }
 
     if (path.startsWith("/media/") && method === "GET") {
@@ -135,7 +143,7 @@ export default {
       return new Response(object.body, { headers });
     }
 
-    if (path.startsWith("/api/") && origin && !allowed.includes(origin)) {
+    if (path.startsWith("/api/") && origin && !allowed.includes(origin) && !isFirstParty(request)) {
       return json(request, env, { success: false, message: "Origin not allowed" }, 403);
     }
 
