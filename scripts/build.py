@@ -4,9 +4,12 @@ root=Path(__file__).resolve().parent.parent
 out=root/'_site'
 if out.exists(): shutil.rmtree(out)
 out.mkdir()
-for name in ['index.html','admin.html','app.css','app.js','manifest.webmanifest','sw.js']:
+for name in ['index.html','app.css','app.js','manifest.webmanifest','sw.js']:
     shutil.copy2(root/name,out/name)
 shutil.copytree(root/'assets',out/'assets')
+# The public /admin/ path only redirects to the authenticated Worker.
+# No administrator forms or credentials are hosted in GitHub Pages.
+shutil.copytree(root/'admin',out/'admin')
 if (root/'CNAME').exists(): shutil.copy2(root/'CNAME',out/'CNAME')
 def data(path):return json.loads((root/path).read_text(encoding='utf8'))
 def items(folder):
