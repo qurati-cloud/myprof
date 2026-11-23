@@ -12,6 +12,27 @@ function setText(root=document){root.querySelectorAll('[data-text]').forEach(nod
 function heading(section){const box=E('div','section-heading');const h=E('h2','',txt(KEYS[section][0]));const p=E('p','',txt(KEYS[section][1]));box.append(h,p);return box}
 function section(id,alt=false){const s=E('section','section'+(alt?' alt':''));s.id=id;s.append(heading(id));return s}
 function link(name,href,cls){const a=E('a',cls,name);a.href=href;return a}
+
+function socialLinks(cls='social-icons'){
+ const wrap=E('div',cls);
+ const items=[
+  ['whatsapp','WhatsApp','social_whatsapp','<path d="M12 2a9.8 9.8 0 0 0-8.5 14.7L2 22l5.5-1.4A10 10 0 1 0 12 2Zm0 2a8 8 0 0 1 0 16 8.2 8.2 0 0 1-4.1-1.1l-.4-.2-3.2.8.9-3.1-.3-.5A8 8 0 0 1 12 4Zm-3 3.8c-.2 0-.5.1-.7.4-.3.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.8 2.9 4.4 3.9 2.2.9 2.6.7 3.1.7.5-.1 1.6-.7 1.8-1.3.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.6-.3l-1.8-.9c-.2-.1-.4-.1-.6.2l-.8 1c-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.2-1.3-.8-.7-1.3-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.8-1.9c-.2-.5-.4-.5-.7-.5Z"/>'],
+  ['instagram','Instagram','social_instagram','<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.2"/>'],
+  ['facebook','Facebook','social_facebook','<path d="M13.4 21v-8h2.7l.4-3.1h-3.1V8c0-.9.3-1.5 1.6-1.5h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2H7.2V13H10v8h3.4Z"/>'],
+  ['youtube','YouTube','social_youtube','<path d="M23 7.1a3 3 0 0 0-2.1-2.1C19 4.5 12 4.5 12 4.5s-7 0-8.9.5A3 3 0 0 0 1 7.1 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.9A3 3 0 0 0 3.1 19c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.9 31 31 0 0 0-.5-4.9ZM9.7 15.2V8.8l5.8 3.2-5.8 3.2Z"/>']
+ ];
+ for(const [id,label,key,path] of items){
+  const target=url(app.settings[key]);
+  const node=target&&target.startsWith('https:')?link('',target,'social-icon-link social-'+id):E('span','social-icon-link social-'+id+' is-pending');
+  node.setAttribute('aria-label',label+(target?'':' — link coming soon'));
+  node.title=label+(target?'':' — link coming soon');
+  if(target){node.target='_blank';node.rel='noopener noreferrer'}
+  else node.setAttribute('aria-disabled','true');
+  node.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+path+'</svg><span class="sr-only">'+label+'</span>';
+  wrap.append(node);
+ }
+ return wrap;
+}
 function services(s){const items=[['courses','▶','service_course_title','service_course_text'],['books','▤','service_book_title','service_book_text'],['private','◉','service_private_title','service_private_text'],['institutions','⌂','service_institution_title','service_institution_text']];const grid=E('div','cards');items.forEach(([id,icon,title,description])=>{const c=link('', '#'+id,'card');c.append(E('span','icon',icon),E('h3','',txt(title)),E('p','',txt(description)));grid.append(c)});s.append(grid)}
 function about(s){
   const wrap=E('div','about-layout');
@@ -87,14 +108,8 @@ function contact(s){
     featureList.append(E('div','contact-point','✓  '+txt(key)));
   }
   intro.append(featureList);
-  const social=E('div','contact-social');
-  [['Instagram','social_instagram'],['Facebook','social_facebook'],['YouTube','social_youtube'],['TikTok','social_tiktok']].forEach(([label,key])=>{
-    const target=url(app.settings[key]);
-    if(target&&target.startsWith('https:')){
-      const a=link(label,target,'contact-social-link');a.target='_blank';a.rel='noopener noreferrer';social.append(a);
-    }
-  });
-  if(social.childElementCount)intro.append(social);
+  const social=socialLinks('contact-social social-icons');
+  intro.append(social);
   const card=E('div','contact-form-card');
   card.append(E('h3','',txt('contact_form_title')));
   card.append(E('p','contact-subtitle',txt('contact_form_description')));
@@ -131,7 +146,7 @@ function contact(s){
   layout.append(intro,card);
   s.append(layout);
 }
-function nav(){const desktop=$('#desktopNav'),bottom=$('#bottomNav'),footer=$('#footerLinks');desktop.replaceChildren();bottom.replaceChildren();footer.replaceChildren();const all=[['home','#home'],['courses','#courses'],['books','#books'],['private','#private'],['institutions','#institutions'],['contact','#contact']];all.forEach(([key,target])=>{if(key!=='home'&&app.settings['show_'+key]===false)return;desktop.append(link(txt(key),target,''));footer.append(link(txt(key),target,''))});footer.className='footer-links';NAV.forEach(([key,icon,target])=>{if(key!=='home'&&app.settings['show_'+key]===false)return;const a=link('',target,'');a.append(E('span','',icon),E('small','',txt(key)));bottom.append(a)});const privacy=E('button','',txt('privacy'));privacy.addEventListener('click',()=>$('#privacyDialog').showModal());footer.append(privacy)}
+function nav(){const desktop=$('#desktopNav'),bottom=$('#bottomNav'),footer=$('#footerLinks');desktop.replaceChildren();bottom.replaceChildren();footer.replaceChildren();const all=[['home','#home'],['courses','#courses'],['books','#books'],['private','#private'],['institutions','#institutions'],['contact','#contact']];all.forEach(([key,target])=>{if(key!=='home'&&app.settings['show_'+key]===false)return;desktop.append(link(txt(key),target,''));footer.append(link(txt(key),target,''))});footer.className='footer-links';NAV.forEach(([key,icon,target])=>{if(key!=='home'&&app.settings['show_'+key]===false)return;const a=link('',target,'');a.append(E('span','',icon),E('small','',txt(key)));bottom.append(a)});const privacy=E('button','',txt('privacy'));privacy.addEventListener('click',()=>$('#privacyDialog').showModal());footer.append(privacy);footer.append(socialLinks('footer-social social-icons'))}
 function apply(){const settings=app.settings,root=document.documentElement;root.lang=language;root.dir=language==='ar'?'rtl':'ltr';const colors=[['color_navy','--navy'],['color_blue','--blue'],['color_orange','--orange'],['color_background','--surface']];colors.forEach(([key,variable])=>{if(/^#[0-9a-f]{6}$/i.test(settings[key]||''))root.style.setProperty(variable,settings[key])});const radius=Number(settings.corner_radius);if(Number.isFinite(radius)&&radius>=0&&radius<=70)root.style.setProperty('--radius',radius+'px');const logo=img(settings.logo);if(logo){$('#brandLogo').src=logo;$('#footerLogo').src=logo}const hero=img(settings.hero_image||settings.logo);if(hero)$('#heroImage').src=hero;document.title=(settings.brand||'My Prof')+' | '+(settings.tagline||'');setText();document.querySelectorAll('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===language));nav();const container=$('#dynamicSections');container.replaceChildren();const order=[...new Set([...(Array.isArray(settings.section_order)?settings.section_order:[]),...SECTIONS])].filter(k=>SECTIONS.includes(k));order.forEach((key,index)=>{if(settings['show_'+key]===false)return;const s=section(key,index%2===0);if(key==='services')services(s);if(key==='about')about(s);if(key==='courses'||key==='books')products(s,key);if(key==='private'||key==='institutions')form(s,key);if(key==='contact')contact(s);container.append(s)});renderItemRoute();const yearNode=$('#year');if(yearNode)yearNode.textContent=new Date().getFullYear()}
 async function start(){try{const r=await fetch('data/catalog.json',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);app=await r.json();language=localStorage.getItem('myprof-language')||app.settings.default_language||'ar';if(!app.texts[language])language='ar';apply()}catch(err){console.error('MyProf content could not be loaded',err);if(window.myprofLoadRetries === undefined)
 window.myprofLoadRetries = 0;
