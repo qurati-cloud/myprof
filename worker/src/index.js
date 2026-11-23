@@ -90,7 +90,21 @@ export default {
     }
 
     if (path === "/api/health" && method === "GET") {
-      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "1.1" });
+      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "1.2" });
+    }
+
+    if (path.startsWith("/media/") && method === "GET") {
+      if (!env.MEDIA) return new Response("Media storage is not configured", { status: 503 });
+      const key = decodeURIComponent(path.slice(7));
+      if (!/^[a-f0-9-]{36}\\.(jpg|png|webp)$/.test(key)) return new Response("Not found", { status: 404 });
+      const object = await env.MEDIA.get(key);
+      if (!object) return new Response("Not found", { status: 404 });
+      const headers = new Headers({
+        "Content-Type": object.httpMetadata?.contentType || "application/octet-stream",
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "X-Content-Type-Options": "nosniff"
+      });
+      return new Response(object.body, { headers });
     }
 
     if (path.startsWith("/api/") && origin && !allowed.includes(origin)) {
@@ -162,7 +176,76 @@ export default {
           return json(request, env, { success: true, products: results || [] });
         }
 
+
+        if (path === "/api/admin/integrations" && method === "GET") {
+          const integrations = {
+            facebook: Boolean(env.META_PAGE_ACCESS_TOKEN && env.META_PAGE_ID),
+            instagram: Boolean(env.META_PAGE_ACCESS_TOKEN && env.INSTAGRAM_USER_ID),
+            tiktok: Boolean(env.TIKTOK_ACCESS_TOKEN),
+            youtube: Boolean(env.YOUTUBE_CLIENT_ID && env.YOUTUBE_CLIENT_SECRET && env.YOUTUBE_REFRESH_TOKEN)
+          };
+          return json(request, env, { success: true, integrations });
+        }
+
+        if (path === "/api/admin/posts" && method === "GET") {
+          const { results } = await env.DB.prepare(
+            "SELECT id,title,caption,platforms_json,media_url,status,scheduled_at,published_at,created_at,updated_at FROM social_posts ORDER BY created_at DESC LIMIT 100"
+          ).all();
+          return json(request, env, { success: true, posts: results || [] });
+        }
+
+        if (path === "/api/admin/media" && method === "POST") {
+          if (!env.MEDIA) return json(request, env, { success: false, message: "Media storage is not configured. Add the MEDIA R2 binding first." }, 503);
+          const form = await request.formData();
+          const file = form.get("file");
+          if (!file || typeof file.stream !== "function") return json(request, env, { success: false, message: "Choose an image file." }, 400);
+          if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) return json(request, env, { success: false, message: "Only JPG, PNG, and WebP images are accepted." }, 415);
+          if (file.size > 8 * 1024 * 1024) return json(request, env, { success: false, message: "Image must be 8 MB or smaller." }, 413);
+          const ext = file.type === "image/jpeg" ? "jpg" : file.type === "image/png" ? "png" : "webp";
+          const key = crypto.randomUUID() + "." + ext;
+          await env.MEDIA.put(key, file.stream(), {
+            httpMetadata: { contentType: file.type, cacheControl: "public, max-age=31536000, immutable" },
+            customMetadata: { uploadedBy: admin.id }
+          });
+          const mediaUrl = new URL("/media/" + key, request.url).toString();
+          await env.DB.prepare("INSERT INTO media_assets (id,object_key,mime_type,file_size) VALUES (?,?,?,?)")
+            .bind(crypto.randomUUID(), key, file.type, file.size).run();
+          await env.DB.prepare("INSERT INTO audit_log (id,actor_user_id,action,target_type,target_id) VALUES (?,?,?,?,?)")
+            .bind(crypto.randomUUID(), admin.id, "media_uploaded", "media", key).run();
+          return json(request, env, { success: true, media_url: mediaUrl, object_key: key }, 201);
+        }
+
+        if (path === "/api/admin/posts" && method === "POST") {
+          const body = await readJson(request);
+          const title = String(body.title || "").trim().slice(0, 160);
+          const caption = String(body.caption || "").trim().slice(0, 5000);
+          const platforms = Array.isArray(body.platforms) ? [...new Set(body.platforms)] : [];
+          const allowedPlatforms = ["facebook", "instagram", "tiktok", "youtube"];
+          if (!title || !caption || !platforms.length || platforms.some(p => !allowedPlatforms.includes(p))) {
+            return json(request, env, { success: false, message: "Add a title, caption, and at least one valid platform." }, 400);
+          }
+          const mediaUrl = String(body.media_url || "").trim();
+          if (mediaUrl && !mediaUrl.startsWith(new URL("/media/", request.url).origin + "/media/")) {
+            return json(request, env, { success: false, message: "Image must be uploaded through the private admin panel." }, 400);
+          }
+          const id = crypto.randomUUID();
+          const scheduledAt = body.scheduled_at ? new Date(body.scheduled_at).toISOString() : null;
+          await env.DB.prepare(
+            "INSERT INTO social_posts (id,title,caption,platforms_json,media_url,status,scheduled_at,created_by) VALUES (?,?,?,?,?,'draft',?,?)"
+          ).bind(id, title, caption, JSON.stringify(platforms), mediaUrl || null, scheduledAt, admin.id).run();
+          await env.DB.prepare("INSERT INTO audit_log (id,actor_user_id,action,target_type,target_id,details_json) VALUES (?,?,?,?,?,?)")
+            .bind(crypto.randomUUID(), admin.id, "social_post_created", "social_post", id, JSON.stringify({ platforms })).run();
+          return json(request, env, { success: true, post: { id, title, caption, platforms, media_url: mediaUrl || null, status: "draft", scheduled_at: scheduledAt } }, 201);
+        }
+
+        const deletePost = path.match(/^\\/api\\/admin\\/posts\\/([a-f0-9-]{36})\\/delete$/);
+        if (deletePost && method === "POST") {
+          const result = await env.DB.prepare("DELETE FROM social_posts WHERE id=?").bind(deletePost[1]).run();
+          return json(request, env, { success: true, deleted: result.meta?.changes || 0 });
+        }
+
         if (path === "/api/admin/sales/summary" && method === "GET") {
+
           const summary = await env.DB.prepare("SELECT COUNT(*) AS event_count, COALESCE(SUM(CASE WHEN event_type='paid' THEN amount_minor ELSE 0 END),0) AS paid_total_minor, COALESCE(MAX(currency),'') AS currency FROM sales_events").first();
           return json(request, env, { success: true, summary });
         }
