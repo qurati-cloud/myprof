@@ -66,7 +66,7 @@
   "contact_email": "Votre adresse e-mail",
   "contact_subject": "Objet",
   "contact_message": "Votre message",
-  "contact_mail_notice": "Ce bouton ouvre votre messagerie avec un message préparé. Vérifiez-le et envoyez-le depuis votre application de messagerie.",
-  "contact_send": "Continuer vers la messagerie",
+  "contact_mail_notice": "Votre message est envoyé directement à l’équipe MyProf.",
+  "contact_send": "Envoyer le message",
   "contact_mail_missing": "Le contact n’est pas encore configuré. Réessayez plus tard."
 }

@@ -217,3 +217,9 @@ dialog::backdrop{background:#0007}.dialog-head{display:flex;justify-content:spac
     margin: 0 auto 16px !important;
     filter: none !important;
 }
+
+/* Form delivery feedback */
+.direct-form-status { margin:12px 0 0; font-weight:700; color:#167348; line-height:1.7; }
+.direct-form-status.is-error { color:#ae2828; }
+button[type="submit"]:disabled { opacity:.65; cursor:wait; }
+.contact-notice[hidden] { display:none!important; }
