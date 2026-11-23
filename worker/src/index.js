@@ -1,4 +1,4 @@
-import { ADMIN_HTML, ADMIN_JS, ADMIN_CSS } from "./admin-page.js";
+import { ADMIN_HTML, ADMIN_JS, ADMIN_CSS, SETUP_HTML, SETUP_JS } from "./admin-page.js";
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
@@ -86,6 +86,17 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders(request, env) });
     }
 
+    if (method === "GET" && path === "/admin/setup") {
+      return new Response(SETUP_HTML, { headers: {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "content-security-policy": "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"
+      }});
+    }
+    if (method === "GET" && path === "/admin/assets/setup.js") {
+      return new Response(SETUP_JS, { headers: { "content-type": "application/javascript; charset=utf-8", "cache-control": "no-store" }});
+    }
     if (method === "GET" && ["/admin", "/admin/"].includes(path)) {
       return new Response(ADMIN_HTML, { headers: {
         "content-type": "text/html; charset=utf-8",
