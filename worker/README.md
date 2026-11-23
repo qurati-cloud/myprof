@@ -1,45 +1,36 @@
-# MyProf AI Worker
+# MyProf AI backend
 
-This folder contains the private API backend for the MyProf administration system.
+The backend and first-party admin dashboard are in `worker/src`. The public MyProf website on GitHub Pages remains separate.
 
-## Current status
+## Ready in GitHub
 
-- `src/index.js`: Worker API foundation (health check, one-time admin bootstrap, login/logout, session validation, product listing, sales summary).
-- `schema.sql`: D1 schema for administrators, sessions, products, media metadata, Payhip events, and audit log.
-- `wrangler.toml`: deployment configuration template.
+- `wrangler.toml`: production D1 + R2 bindings.
+- `src/index.js`: authenticated Worker API, health check, admin bootstrap, protected draft creation and image upload.
+- `src/admin-page.js`: admin UI served directly on the Worker hostname (first-party sessions).
+- `schema.sql` and `migrations/0002_social_posts.sql`: D1 schema and draft table.
+- `.github/workflows/deploy-worker.yml`: optional Cloudflare deployment after adding a GitHub secret.
 
-The API is **not ready to receive private data yet**. It must first be deployed with a real D1 binding and secrets.
+## Deployment (one-time account authorization)
 
-## One-time Cloudflare setup
+1. Create a restricted Cloudflare API token with Workers deployment permission for this account.
+2. Add it as `CLOUDFLARE_API_TOKEN` to repository Actions secrets in GitHub. **Do not put the token in any public file, chat, or workflow source.**
+3. Run **Actions → Deploy MyProf AI API → Run workflow** once. Afterward, commits changing `worker/**` will deploy the Worker automatically.
+4. Verify `https://myprof-ai-api.quraaty.workers.dev/api/health` returns version `1.2`. Deployment of code must be confirmed before proceeding.
 
-1. In Cloudflare, open **Storage & databases → D1 SQL Database → Create**.
-2. Name it exactly `myprof-ai-db`.
-3. Copy its Database ID. Do not share account passwords or API tokens in chat.
-4. Replace `REPLACE_WITH_D1_DATABASE_ID` in `wrangler.toml` with that ID.
-5. In the D1 database, open **Console** and execute the complete contents of `schema.sql`.
-6. In the Worker settings, add these secrets:
-   - `ADMIN_SETUP_TOKEN`: a long random one-time setup token (at least 32 random characters).
-7. Keep the Worker route on its existing `workers.dev` hostname for now. Do not change MyProf DNS.
-8. Deploy this Worker from the `worker` directory using Wrangler, or connect this repository to Cloudflare Workers Builds with `worker` as the root directory.
+## Admin account bootstrap (one-time)
 
-## Initialize the first administrator
+1. In Cloudflare Worker dashboard **Settings → Variables and secrets**, create a Secret named `ADMIN_SETUP_TOKEN` with a long random value (32+ characters).
+2. Open `https://myprof-ai-api.quraaty.workers.dev/admin/setup` and enter your email, a strong unique password (14+ characters) and your setup token. All values stay within your browser/Cloudflare.
+3. After the account is created, delete the `ADMIN_SETUP_TOKEN` Secret from Worker settings; deploy the changed Worker version if Cloudflare requests confirmation.
+4. Log in at `https://myprof-ai-api.quraaty.workers.dev/admin`.
 
-After D1 is bound and the Worker is deployed, send a POST request to:
+Never enter or share passwords or the Cloudflare API token in ChatGPT.
 
-`/api/admin/setup`
+## Limitations and security
 
-Headers:
-- `Content-Type: application/json`
-- `X-Setup-Token: <the ADMIN_SETUP_TOKEN>`
-
-JSON body:
-`{"email":"YOUR_ADMIN_EMAIL","password":"A-unique-password-at-least-14-characters"}`
-
-The setup endpoint only works while no admin user exists. After successful initialization, delete the `ADMIN_SETUP_TOKEN` secret from the Worker settings and redeploy.
-
-## Security notes
-
-- Never put secrets in `app.js`, `index.html`, GitHub Pages files, or public JSON.
-- Admin session cookies are HttpOnly, Secure, and SameSite=Strict.
-- Do not store Payhip customer details unless strictly necessary. Store only redacted event metadata for aggregate reporting.
-- The current API does not yet implement AI calls, file uploads, Payhip webhook signature verification, product editing, or publishing to the public site. Those are subsequent implementation tasks.
+- Social posts are saved **as drafts only**; automatic publication to Meta, TikTok, YouTube is **not active** until each platform's official authorization and publishing implementation have been separately tested.
+- R2 uploads support JPG/PNG/WebP images up to 8 MB, not PDF storage. Uploaded images are publicly readable by their unguessable Worker media URLs; never upload private documents using this image endpoint.
+- Payhip events and GitHub publication workflows require further implementation. No sales data is automatically imported yet.
+- The current admin UI is hosted on the Worker domain, not under `myprof.ca/admin`. A later same-origin route/redirect can be added without exposing account data.
+- No public file or public website contains credentials. The HTML/CSS/JavaScript of the admin UI itself is not confidential; the private API restricts data by authenticated session.
+- Add login rate limiting and further operational checks before broader production use.
