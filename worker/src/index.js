@@ -127,7 +127,7 @@ export default {
     }
 
     if (path === "/api/health" && method === "GET") {
-      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "2.1" });
+      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "2.2" });
     }
 
     if (path.startsWith("/media/") && method === "GET") {
