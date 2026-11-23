@@ -5,10 +5,8 @@
   "description_ar": "تصفح الكتب الرقمية المتاحة عبر متجرنا.",
   "description_en": "Browse digital books in our store.",
   "description_fr": "Parcourez les livres numériques de notre boutique.",
-  "image": "",
-  "price": "",
+  "price": "5$",
   "url": "https://payhip.com/myprofca",
-  "language": "",
   "published": false,
   "order": 1
 }
