@@ -126,7 +126,7 @@ export default {
     }
 
     if (path === "/api/health" && method === "GET") {
-      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "1.6" });
+      return json(request, env, { success: true, service: "MyProf AI", status: "running", version: "2.0" });
     }
 
     if (path.startsWith("/media/") && method === "GET") {
@@ -227,6 +227,94 @@ export default {
           return json(request, env, { success: true, products: results || [] });
         }
 
+
+
+        // Internal editorial catalog. These records do not mutate the public
+        // GitHub Pages catalog. No automated publishing is performed here.
+        if (path === "/api/admin/products" && method === "POST") {
+          const body = await readJson(request);
+          const type = String(body.product_type || "");
+          const title = String(body.title_ar || "").trim().slice(0, 180);
+          if (!["book","course"].includes(type) || !title) {
+            return json(request,env,{success:false,message:"حدد نوع المنتج وعنوانه بالعربية."},400);
+          }
+          const slug = "draft-" + crypto.randomUUID();
+          const id = crypto.randomUUID();
+          const fields = [
+            title,String(body.title_en||"").trim().slice(0,180),
+            String(body.title_fr||"").trim().slice(0,180),
+            String(body.description_ar||"").trim().slice(0,6000),
+            String(body.description_en||"").trim().slice(0,6000),
+            String(body.description_fr||"").trim().slice(0,6000),
+            String(body.cover_url||"").trim().slice(0,1000),
+            String(body.payhip_url||"").trim().slice(0,1000)
+          ];
+          for (const urlField of fields.slice(6)) {
+            if (urlField && !/^https:\/\//i.test(urlField)) return json(request,env,{success:false,message:"روابط الصورة والمنصة ينبغي أن تبدأ بـ https://"},400);
+          }
+          await env.DB.prepare("INSERT INTO products (id,product_type,slug,title_ar,title_en,title_fr,description_ar,description_en,description_fr,cover_url,payhip_url,is_published,sort_order) VALUES (?,?,?,?,?,?,?,?,?,?,?,0,0)")
+            .bind(id,type,slug,...fields).run();
+          return json(request,env,{success:true,id,message:"Saved to internal product library only."},201);
+        }
+
+        const productIdMatch = path.match(/^\/api\/admin\/products\/([a-f0-9-]{36})$/);
+        if (productIdMatch && method === "POST") {
+          const body = await readJson(request);
+          const type = String(body.product_type || "");
+          const title = String(body.title_ar || "").trim().slice(0,180);
+          if (!["book","course"].includes(type) || !title) return json(request,env,{success:false,message:"حدد نوع المنتج وعنوانه بالعربية."},400);
+          const fields=[
+            type,title,String(body.title_en||"").trim().slice(0,180),
+            String(body.title_fr||"").trim().slice(0,180),
+            String(body.description_ar||"").trim().slice(0,6000),
+            String(body.description_en||"").trim().slice(0,6000),
+            String(body.description_fr||"").trim().slice(0,6000),
+            String(body.cover_url||"").trim().slice(0,1000),
+            String(body.payhip_url||"").trim().slice(0,1000)
+          ];
+          for(const urlField of fields.slice(7)) {
+            if(urlField && !/^https:\/\//i.test(urlField)) return json(request,env,{success:false,message:"روابط الصورة والمنصة ينبغي أن تبدأ بـ https://"},400);
+          }
+          const result=await env.DB.prepare("UPDATE products SET product_type=?,title_ar=?,title_en=?,title_fr=?,description_ar=?,description_en=?,description_fr=?,cover_url=?,payhip_url=?,updated_at=CURRENT_TIMESTAMP WHERE id=?")
+            .bind(...fields,productIdMatch[1]).run();
+          return json(request,env,{success:true,updated:result.meta?.changes||0});
+        }
+
+        const productDelete = path.match(/^\/api\/admin\/products\/([a-f0-9-]{36})\/delete$/);
+        if (productDelete && method === "POST") {
+          const result=await env.DB.prepare("DELETE FROM products WHERE id=?").bind(productDelete[1]).run();
+          return json(request,env,{success:true,deleted:result.meta?.changes||0});
+        }
+
+        if(path === "/api/admin/media" && method === "GET") {
+          const {results}=await env.DB.prepare("SELECT id,object_key,mime_type,file_size,created_at FROM media_assets ORDER BY created_at DESC LIMIT 120").all();
+          const base=new URL(request.url).origin;
+          const media=(results||[]).map(item=>({...item,url:base+"/media/"+encodeURIComponent(item.object_key)}));
+          return json(request,env,{success:true,media});
+        }
+
+        if(path === "/api/admin/overview" && method === "GET") {
+          const [products,posts,media]=await Promise.all([
+            env.DB.prepare("SELECT COUNT(*) AS n FROM products").first(),
+            env.DB.prepare("SELECT COUNT(*) AS n FROM social_posts").first(),
+            env.DB.prepare("SELECT COUNT(*) AS n FROM media_assets").first()
+          ]);
+          return json(request,env,{success:true,counts:{products:products?.n||0,posts:posts?.n||0,media:media?.n||0}});
+        }
+
+        const editPost = path.match(/^\/api\/admin\/posts\/([a-f0-9-]{36})$/);
+        if (editPost && method === "POST") {
+          const body=await readJson(request);
+          const title=String(body.title||"").trim().slice(0,160);
+          const caption=String(body.caption||"").trim().slice(0,5000);
+          const platforms=Array.isArray(body.platforms)?[...new Set(body.platforms)]:[];
+          if(!title||!caption||!platforms.length||platforms.some(p=>!["facebook","instagram","tiktok","youtube"].includes(p))) {
+            return json(request,env,{success:false,message:"أدخل العنوان والنص واختر منصة واحدة على الأقل."},400);
+          }
+          const updated=await env.DB.prepare("UPDATE social_posts SET title=?,caption=?,platforms_json=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='draft'")
+            .bind(title,caption,JSON.stringify(platforms),editPost[1]).run();
+          return json(request,env,{success:true,updated:updated.meta?.changes||0});
+        }
 
         if (path === "/api/admin/integrations" && method === "GET") {
           const integrations = {
