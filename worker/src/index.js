@@ -96,7 +96,7 @@ export default {
     if (path.startsWith("/media/") && method === "GET") {
       if (!env.MEDIA) return new Response("Media storage is not configured", { status: 503 });
       const key = decodeURIComponent(path.slice(7));
-      if (!/^[a-f0-9-]{36}\\.(jpg|png|webp)$/.test(key)) return new Response("Not found", { status: 404 });
+      if (!/^[a-f0-9-]{36}\.(jpg|png|webp)$/.test(key)) return new Response("Not found", { status: 404 });
       const object = await env.MEDIA.get(key);
       if (!object) return new Response("Not found", { status: 404 });
       const headers = new Headers({
@@ -238,7 +238,7 @@ export default {
           return json(request, env, { success: true, post: { id, title, caption, platforms, media_url: mediaUrl || null, status: "draft", scheduled_at: scheduledAt } }, 201);
         }
 
-        const deletePost = path.match(/^\\/api\\/admin\\/posts\\/([a-f0-9-]{36})\\/delete$/);
+        const deletePost = path.match(/^\/api\/admin\/posts\/([a-f0-9-]{36})\/delete$/);
         if (deletePost && method === "POST") {
           const result = await env.DB.prepare("DELETE FROM social_posts WHERE id=?").bind(deletePost[1]).run();
           return json(request, env, { success: true, deleted: result.meta?.changes || 0 });
