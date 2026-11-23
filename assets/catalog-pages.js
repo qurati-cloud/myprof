@@ -29,7 +29,7 @@
   function products(kind){return Array.isArray(catalog?.[kind])?catalog[kind]:[];}
   function cover(item,kind,cls){
     const wrap=el('div',cls);
-    const src=image(item.image);
+    const src=image(local(item,'image'));
     if(src){const pic=el('img');pic.src=src;pic.alt=local(item,'title');pic.loading='lazy';wrap.append(pic);}
     else wrap.append(el('span','catalog-fallback',kind==='books'?'📖':'🎓'));
     return wrap;
